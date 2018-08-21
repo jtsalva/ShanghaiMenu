@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Shanghai Menu | Search</title>
+    <link rel="stylesheet" href="static/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <style>
+        @font-face {
+            font-family: 'Roboto';
+            font-style: normal;
+            font-weight: 400;
+            src: local('Roboto'), local('Roboto-Regular'), url(static/roboto.woff2) format('woff2');
+            unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            padding-bottom: 50px;
+            background-color: #CB4528;
+        }
+
+        #searchBar {
+            width: 1100px;
+            height: 70px;
+            margin-top: 10px;
+            font-size: 2.5em;
+            padding: 35px 15px;
+            font-weight: bold;
+            border: 2px solid black;
+            border-radius: 20px;
+        }
+
+        #items {
+            margin-top: 20px;
+            padding: 0;
+            width: 1100px;
+            font-size: 2.5em;
+            font-weight: bold;
+        }
+
+        .item {
+            border: 2px solid black;
+        }
+
+        .item:hover {
+            cursor: pointer;
+        }
+
+        .item td {
+            padding: 10px;
+            background-color: #F5F5F5;
+        }
+
+        .item .name {
+            text-align: left;
+            padding-left: 40px;
+        }
+
+        .item .name .info {
+            color: grey;
+            font-size: 0.8em;
+        }
+
+        .item .id {
+            text-align: right;
+            font-size: 1.5em;
+            padding-right: 50px;
+            border-right: 20px solid black;
+        }
+
+        .item:hover .id {
+            background-color: black;
+            color: white;
+        }
+
+        .item.vegetarian .id {
+            border-right: 20px solid green;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container-fluid" style="text-align: center;">
+        <div id="topBar">
+            <input id="searchBar" type="text" placeholder="type to search" onkeyup="filterItems()" />
+        </div>
+
+        <table id="items" align="center">
+            {{ range .Items }}
+                {{ if .Vegetarian }}
+                    <tr class="item vegetarian">
+                {{ else }}
+                    <tr class="item">
+                 {{ end }}
+                    <td class="name">{{ .Name }}</td>
+                <td class="id">{{ .Id }}</td>
+            </tr>
+            {{ end }}
+        </table>
+    </div>
+
+    <script src="static/jquery.min.js"></script>
+    <script src="static/popper.min.js"></script>
+    <script src="static/bootstrap.min.js"></script>
+    <script>
+        function filterItems() {
+            const val = $("#searchBar").val();
+
+            if (!val) {
+                $(".item").each(function() {
+                    $(this).show();
+                });
+                return;
+            }
+
+            if (!isNaN(val.charAt(0))) {
+                $(".item").each(function() {
+                   const pureNumId = $(this).children(".id").text().replace(/[^0-9]/, '');
+
+                   if (val == pureNumId) {
+                       $(this).show();
+                   } else {
+                       $(this).hide();
+                   }
+                });
+                return;
+            }
+
+            $.ajax({
+               url: "/search/",
+               data: {
+                   q: val
+               },
+               type: "GET",
+               success: function(response) {
+                   if (response != null) {
+                       const results = JSON.parse(response);
+
+                       $(".item").each(function() {
+                           if (results.includes($(this).children(".id").text())) {
+                               $(this).show();
+                           } else {
+                               $(this).hide();
+                           }
+                       });
+                   } else {
+                       $(".item").each(function() {
+                          $(this).hide();
+                       });
+                   }
+               }
+            });
+        }
+
+        $(document).ready(function() {
+           $(".item").each(function() {
+               const nameEl = $(this).children(".name");
+               const name = nameEl.text();
+
+               const bracketIndex = name.indexOf("(");
+               if (bracketIndex > -1) {
+                   const info = name.substr(bracketIndex, name.length);
+
+                   nameEl.html(name.substr(0, bracketIndex) + "<span class=\"info\">" + info + "</span>");
+               }
+           });
+        });
+    </script>
+</body>
+</html>
