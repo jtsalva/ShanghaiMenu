@@ -2,15 +2,15 @@ package main
 
 func createItem(id string, name string) Item {
 	return Item{
-		Id: id,
+		Id:   id,
 		Name: name,
 	}
 }
 
 func createVegetarianItem(id string, name string) Item {
 	return Item{
-		Id: id,
-		Name: name,
+		Id:         id,
+		Name:       name,
 		Vegetarian: true,
 	}
 }

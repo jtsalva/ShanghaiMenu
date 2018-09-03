@@ -1,25 +1,26 @@
 package main
 
 import (
-	"strings"
-	"log"
-	"github.com/gorilla/mux"
-	"net/http"
 	"encoding/json"
 	"html/template"
+	"log"
+	"net/http"
+	"strings"
+
+	"github.com/gorilla/mux"
 	"github.com/sahilm/fuzzy"
 	fuzzySpelling "github.com/sajari/fuzzy"
 )
 
 type Item struct {
-	Id string `json:"id"`
-	Name string `json:"name"`
-	Vegetarian bool `json:"vegetarian"`
+	Id         string `json:"id"`
+	Name       string `json:"name"`
+	Vegetarian bool   `json:"vegetarian"`
 }
 
 type ItemIndex struct {
-	Id string
-	Terms []string
+	Id         string
+	Terms      []string
 	TermLength int32
 }
 
@@ -45,8 +46,8 @@ func unique(stringSlice []string) []string {
 }
 
 type MenuEngine struct {
-	Items []Item
-	index []ItemIndex
+	Items    []Item
+	index    []ItemIndex
 	allTerms []string
 	Spelling *fuzzySpelling.Model
 }
@@ -71,8 +72,8 @@ func (m *MenuEngine) Index() {
 		terms := strings.Split(name, " ")
 
 		m.index = append(m.index, ItemIndex{
-			Id: item.Id,
-			Terms: terms,
+			Id:         item.Id,
+			Terms:      terms,
 			TermLength: int32(len(terms)),
 		})
 
@@ -104,7 +105,7 @@ func (m *MenuEngine) Find(query string) []string {
 			}
 			passedTerms += 1
 		}
-		if passedTerms == int32(len(terms)){
+		if passedTerms == int32(len(terms)) {
 			matches = append(matches, itemIndex.Id)
 		}
 	}
@@ -113,7 +114,7 @@ func (m *MenuEngine) Find(query string) []string {
 }
 
 var engine = MenuEngine{
-	Items: menu,
+	Items:    menu,
 	Spelling: fuzzySpelling.NewModel(),
 }
 
@@ -137,7 +138,7 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 
 	t.Execute(w, struct {
 		Items []Item
-	} {
+	}{
 		Items: menu,
 	})
 }
