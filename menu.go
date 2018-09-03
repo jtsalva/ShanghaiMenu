@@ -15,6 +15,7 @@ func createVegetarianItem(id string, name string) Item {
 	}
 }
 
+// Based on physical menu
 var menu = []Item{
 	createItem("1", "Hot & Sour Soup"),
 	createItem("2", "Chicken & Sweetcorn Soup"),
