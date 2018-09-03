@@ -8,6 +8,8 @@ func createItem(id string, name string) Item {
 }
 
 // new test
+
+// should work
 func createVegetarianItem(id string, name string) Item {
 	return Item{
 		Id:         id,
