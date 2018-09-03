@@ -7,6 +7,7 @@ func createItem(id string, name string) Item {
 	}
 }
 
+// new test
 func createVegetarianItem(id string, name string) Item {
 	return Item{
 		Id:         id,
