@@ -24,6 +24,7 @@ type ItemIndex struct {
 	TermLength int32
 }
 
+// Does the string exist in the slice
 func stringInSlice(s string, list []string) bool {
 	matches := fuzzy.Find(s, list)
 	if len(matches) > 0 {
